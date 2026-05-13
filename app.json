@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "x-clone",
+    "slug": "x-clone",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "x-clone",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fdf6e3"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.xclone"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#fdf6e3",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.xclone"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Дозвольте доступ до галереї для публікації фото."
+        }
+      ],
+      "expo-image",
+      "expo-secure-store",
+      "expo-web-browser"
+    ]
+  }
+}
