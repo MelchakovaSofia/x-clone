@@ -11,10 +11,12 @@
  */
 
 import type * as bookmarks from "../bookmarks.js";
+import type * as chat from "../chat.js";
 import type * as comments from "../comments.js";
 import type * as likes from "../likes.js";
 import type * as notifications from "../notifications.js";
 import type * as posts from "../posts.js";
+import type * as stories from "../stories.js";
 import type * as users from "../users.js";
 
 import type {
@@ -25,10 +27,12 @@ import type {
 
 type AllModules = {
   bookmarks: typeof bookmarks;
+  chat: typeof chat;
   comments: typeof comments;
   likes: typeof likes;
   notifications: typeof notifications;
   posts: typeof posts;
+  stories: typeof stories;
   users: typeof users;
 };
 
@@ -42,10 +46,12 @@ type PublicFiltered = FilterApi<
 /** Same tree but without `users` — avoids some TS language-service collapses on `typeof fullApi`. */
 type NonUserModules = {
   bookmarks: typeof bookmarks;
+  chat: typeof chat;
   comments: typeof comments;
   likes: typeof likes;
   notifications: typeof notifications;
   posts: typeof posts;
+  stories: typeof stories;
 };
 
 type ExtraPublic = FilterApi<

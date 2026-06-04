@@ -1,9 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-/**
- * Get all conversations for the current user
- */
 export const getConversations = query({
   args: {},
   async handler(ctx) {
@@ -17,7 +14,6 @@ export const getConversations = query({
 
     if (!currentUser) return [];
 
-    // Get all conversations where user is a participant
     const conversations = await ctx.db
       .query("conversations")
       .collect();
@@ -26,7 +22,6 @@ export const getConversations = query({
       conv.participantIds.includes(currentUser._id)
     );
 
-    // Enrich with other participant data
     const enriched = await Promise.all(
       userConversations.map(async (conv) => {
         const otherUserId = conv.participantIds.find(
@@ -41,16 +36,12 @@ export const getConversations = query({
       })
     );
 
-    // Sort by lastMessageAt descending
     return enriched.sort(
       (a, b) => (b.lastMessageAt || 0) - (a.lastMessageAt || 0)
     );
   },
 });
 
-/**
- * Get or create a conversation between two users
- */
 export const getOrCreateConversation = mutation({
   args: {
     userId: v.id("users"),
@@ -66,7 +57,6 @@ export const getOrCreateConversation = mutation({
 
     if (!currentUser) throw new Error("User not found");
 
-    // Check if conversation already exists
     const existing = await ctx.db
       .query("conversations")
       .collect();
@@ -81,7 +71,6 @@ export const getOrCreateConversation = mutation({
       return conversation._id;
     }
 
-    // Create new conversation
     const conversationId = await ctx.db.insert("conversations", {
       participantIds: [currentUser._id, args.userId],
       lastMessage: undefined,
@@ -92,9 +81,6 @@ export const getOrCreateConversation = mutation({
   },
 });
 
-/**
- * Send a message in a conversation
- */
 export const sendMessage = mutation({
   args: {
     conversationId: v.id("conversations"),
@@ -120,7 +106,6 @@ export const sendMessage = mutation({
 
     const now = Date.now();
 
-    // Insert message
     const messageId = await ctx.db.insert("messages", {
       conversationId: args.conversationId,
       senderId: currentUser._id,
@@ -128,7 +113,6 @@ export const sendMessage = mutation({
       createdAt: now,
     });
 
-    // Update conversation's last message info
     await ctx.db.patch(args.conversationId, {
       lastMessage: args.content,
       lastMessageAt: now,
@@ -138,9 +122,6 @@ export const sendMessage = mutation({
   },
 });
 
-/**
- * Get all messages in a conversation
- */
 export const getMessages = query({
   args: {
     conversationId: v.id("conversations"),
@@ -154,7 +135,6 @@ export const getMessages = query({
       .order("asc")
       .collect();
 
-    // Enrich with sender data
     const enriched = await Promise.all(
       messages.map(async (msg) => {
         const sender = await ctx.db.get(msg.senderId);
@@ -169,9 +149,6 @@ export const getMessages = query({
   },
 });
 
-/**
- * Delete a message
- */
 export const deleteMessage = mutation({
   args: {
     messageId: v.id("messages"),

@@ -45,6 +45,25 @@ export const feedStyles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 12,
   },
+  addStoryButton: {
+    alignItems: "center",
+    width: 74,
+  },
+  storyCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: COLORS.surfaceLight,
+    backgroundColor: COLORS.surfaceLight,
+  },
+  storyUsername: {
+    marginTop: 6,
+    fontSize: 12,
+    color: COLORS.textMuted,
+    maxWidth: 74,
+    textAlign: "center",
+  },
 
   postContainer: {
     borderBottomWidth: 1,

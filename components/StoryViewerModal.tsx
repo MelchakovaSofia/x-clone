@@ -3,6 +3,7 @@ import {
   Modal,
   View,
   Image,
+  Text,
   Pressable,
   Animated,
   Dimensions,
@@ -32,10 +33,8 @@ export const StoryViewerModal = ({
   useEffect(() => {
     if (!visible || !story) return;
 
-    // Increment views when story opens
     incrementViews({ storyId: story._id }).catch(console.error);
 
-    // Start progress animation
     Animated.timing(progress, {
       toValue: 1,
       duration: STORY_DURATION,

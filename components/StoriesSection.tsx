@@ -57,9 +57,9 @@ export function StoriesSection() {
     return null;
   }
 
-  const data = storiesUsers
-    ? [{ id: "add", user: null }, ...storiesUsers]
-    : [];
+  type AddStoryItem = { id: "add" };
+  const data: (AddStoryItem | (NonNullable<typeof storiesUsers>[number]))[] =
+    storiesUsers ? [{ id: "add" }, ...storiesUsers] : [];
 
   return (
     <View style={feedStyles.storiesContainer}>
@@ -67,10 +67,12 @@ export function StoriesSection() {
         data={data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(s, idx) => s.id || idx.toString()}
+        keyExtractor={(s, idx) =>
+          "id" in s && s.id === "add" ? "add" : ("_id" in s ? s._id : String(idx))
+        }
         contentContainerStyle={feedStyles.storiesContent}
         renderItem={({ item }) =>
-          item.id === "add" ? (
+          "id" in item && item.id === "add" ? (
             <Pressable
               style={feedStyles.addStoryButton}
               onPress={handleAddStory}

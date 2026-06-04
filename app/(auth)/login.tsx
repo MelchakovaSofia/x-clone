@@ -1,10 +1,11 @@
-import { useAuth, useSSO } from "@clerk/clerk-expo";
+import { useAuth, useSSO, useSignIn } from "@clerk/clerk-expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as Linking from "expo-linking";
+import * as AuthSession from "expo-auth-session";
 import { Redirect } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback, useState } from "react";
 import {
+  Platform,
   Pressable,
   Text,
   View,
@@ -16,25 +17,64 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const { isSignedIn, isLoaded } = useAuth();
+  const { signIn, isLoaded: signInLoaded } = useSignIn();
   const { startSSOFlow } = useSSO();
   const [error, setError] = useState<string | null>(null);
 
   const onGoogle = useCallback(async () => {
     setError(null);
     try {
-      const redirectUrl = Linking.createURL("/", { scheme: "x-clone" });
-      const { createdSessionId, setActive } = await startSSOFlow({
-        strategy: "oauth_google",
-        redirectUrl,
-      });
+      const redirectUrl =
+        Platform.OS === "web" && typeof window !== "undefined"
+          ? `${window.location.origin.replace(/\/$/, "")}/sso-callback`
+          : AuthSession.makeRedirectUri({
+              scheme: "x-clone",
+              path: "sso-callback",
+            });
+
+      // Web: full-page redirect avoids broken popup/postMessage flows in many browsers.
+      if (Platform.OS === "web" && typeof window !== "undefined") {
+        if (!signInLoaded || !signIn) {
+          return;
+        }
+        await signIn.create({
+          strategy: "oauth_google",
+          redirectUrl,
+        });
+        const oauthUrl =
+          signIn.firstFactorVerification.externalVerificationRedirectURL;
+        if (!oauthUrl) {
+          setError(
+            "Не вдалося розпочати вхід Google. Перевірте redirect URL у Clerk:\n" +
+              redirectUrl,
+          );
+          return;
+        }
+        window.location.assign(oauthUrl.toString());
+        return;
+      }
+
+      const { createdSessionId, setActive, authSessionResult } =
+        await startSSOFlow({
+          strategy: "oauth_google",
+          redirectUrl,
+        });
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
+        return;
       }
+      if (authSessionResult?.type === "cancel" || authSessionResult?.type === "dismiss") {
+        return;
+      }
+      setError(
+        "Не вдалося завершити вхід. Перевірте в Clerk Dashboard, що для Google OAuth додано саме цей redirect URL:\n" +
+          redirectUrl,
+      );
     } catch (e) {
       const message = e instanceof Error ? e.message : "Sign-in failed";
       setError(message);
     }
-  }, [startSSOFlow]);
+  }, [signIn, signInLoaded, startSSOFlow]);
 
   if (!isLoaded) {
     return null;
