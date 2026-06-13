@@ -47,11 +47,7 @@ npx expo start
 
 ## Репозиторій
 
-Публічний репозиторій ще не створено (посилання `MelchakovaSofia/x-clone` дає 404).
-
-Після створення репозиторію на GitHub додайте сюди актуальне посилання, наприклад:
-
-`https://github.com/ВАШ_ЛОГІН/x-clone`
+https://github.com/MelchakovaSofia/x-clone
 
 ## Збірки (EAS)
 
