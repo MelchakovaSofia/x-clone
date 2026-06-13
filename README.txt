@@ -8,4 +8,4 @@
   npx expo start
 
 Детальні інструкції — у README.md
-Репозиторій: (створити на GitHub — див. інструкцію нижче)
+Репозиторій: https://github.com/MelchakovaSofia/x-clone
