@@ -2,17 +2,16 @@
 /**
  * Generated `api` utility.
  *
- * THIS CODE is partially hand-maintained (see `publicApi` below).
- * After `npx convex dev`, if `api` loses modules in the IDE, keep `publicApi` as-is.
+ * THIS CODE IS AUTOMATICALLY GENERATED.
  *
- * HTTP router (`convex/http.ts`) must not be listed here — it breaks `FilterApi` inference.
- *
+ * To regenerate, run `npx convex dev`.
  * @module
  */
 
 import type * as bookmarks from "../bookmarks.js";
 import type * as chat from "../chat.js";
 import type * as comments from "../comments.js";
+import type * as http from "../http.js";
 import type * as likes from "../likes.js";
 import type * as notifications from "../notifications.js";
 import type * as posts from "../posts.js";
@@ -25,52 +24,41 @@ import type {
   FunctionReference,
 } from "convex/server";
 
-type AllModules = {
+declare const fullApi: ApiFromModules<{
   bookmarks: typeof bookmarks;
   chat: typeof chat;
   comments: typeof comments;
+  http: typeof http;
   likes: typeof likes;
   notifications: typeof notifications;
   posts: typeof posts;
   stories: typeof stories;
   users: typeof users;
-};
-
-type FullTree = ApiFromModules<AllModules>;
-
-type PublicFiltered = FilterApi<
-  FullTree,
-  FunctionReference<any, "public">
->;
-
-/** Same tree but without `users` — avoids some TS language-service collapses on `typeof fullApi`. */
-type NonUserModules = {
-  bookmarks: typeof bookmarks;
-  chat: typeof chat;
-  comments: typeof comments;
-  likes: typeof likes;
-  notifications: typeof notifications;
-  posts: typeof posts;
-  stories: typeof stories;
-};
-
-type ExtraPublic = FilterApi<
-  ApiFromModules<NonUserModules>,
-  FunctionReference<any, "public">
->;
-
-/**
- * Merge: keep `users` from the full filter, (re)attach other modules from a separate inference path.
- */
-type publicApi = Omit<PublicFiltered, keyof ExtraPublic> & ExtraPublic;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = api.myModule.myFunction;
+ * ```
  */
-export declare const api: publicApi;
+export declare const api: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "public">
+>;
 
+/**
+ * A utility for referencing Convex functions in your app's internal API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = internal.myModule.myFunction;
+ * ```
+ */
 export declare const internal: FilterApi<
-  FullTree,
+  typeof fullApi,
   FunctionReference<any, "internal">
 >;
 
